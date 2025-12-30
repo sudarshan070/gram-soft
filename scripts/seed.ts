@@ -18,22 +18,33 @@ async function main() {
       status: "ACTIVE",
     }));
 
-  const email = "admin";
-  const existing = await UserModel.findOne({ email });
+  const superAdmins = [
+    { email: "admin", password: "admin123" },
+    { email: "gramsoft@gmail.com", password: "SwarajSoft@123" },
+  ];
 
-  if (!existing) {
-    const passwordHash = await hashPassword("admin123");
-    await UserModel.create({
-      name: "Super Admin",
-      email,
-      passwordHash,
-      role: "SUPER_ADMIN",
-      status: "ACTIVE",
-    });
+  for (const sa of superAdmins) {
+    const passwordHash = await hashPassword(sa.password);
+    await UserModel.updateOne(
+      { email: sa.email },
+      {
+        $set: {
+          name: "Super Admin",
+          passwordHash,
+          role: "SUPER_ADMIN",
+          status: "ACTIVE",
+        },
+        $setOnInsert: {
+          createdAt: new Date(),
+        },
+      },
+      { upsert: true },
+    );
   }
 
   console.log("Seed complete");
   console.log("- SUPER_ADMIN: admin / admin123");
+  console.log("- SUPER_ADMIN: gramsoft@gmail.com / SwarajSoft@123");
   console.log("- Sample village:", String(createdVillage._id), createdVillage.name);
 }
 
