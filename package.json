@@ -11,22 +11,23 @@
     "seed": "tsx scripts/seed.ts"
   },
   "dependencies": {
-    "next": "16.1.1",
-    "react": "19.2.3",
-    "react-dom": "19.2.3",
     "@ant-design/nextjs-registry": "^1.0.2",
     "antd": "^5.27.4",
     "bcryptjs": "^3.0.2",
     "dotenv": "^17.2.2",
+    "sanscript": "^1.1.6",
     "jose": "^6.1.0",
     "mongoose": "^8.19.0",
+    "next": "16.1.1",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
     "zod": "^4.1.5"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^3.0.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@types/bcryptjs": "^3.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.1.1",
     "eslint-config-prettier": "^10.1.8",
