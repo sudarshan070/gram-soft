@@ -15,7 +15,6 @@ export function MarathiTransliterateInput(props: {
 
   function withAnusvaraHeuristic(input: string) {
     // Map a subset of common English "n" + consonant clusters to anusvara.
-    // Example: Priyanka -> PriyaMka -> प्रियंका
     return input.replace(/n(?=(kh|k|gh|g|ch|c|jh|j|th|t|dh|d|ph|p|bh|b))/gi, "M");
   }
 
@@ -26,8 +25,16 @@ export function MarathiTransliterateInput(props: {
 
   const isLatin = useMemo(() => /[a-zA-Z]/.test(display), [display]);
 
+  const { prefix, lastWord } = useMemo(() => {
+    const m = display.match(/^(.*?)([^\s]*)$/);
+    return {
+      prefix: m?.[1] ?? "",
+      lastWord: m?.[2] ?? "",
+    };
+  }, [display]);
+
   const options = useMemo(() => {
-    const q = display.trim();
+    const q = lastWord.trim();
     if (!q) return [] as Array<{ value: string; label: string }>;
     if (!/[a-zA-Z]/.test(q)) return [] as Array<{ value: string; label: string }>;
 
@@ -43,19 +50,20 @@ export function MarathiTransliterateInput(props: {
     const title = Sanscript.t(titleCase, "itrans", "devanagari");
 
     const uniq = Array.from(new Set([base, lower, anusvara, title].filter(Boolean)));
-    return uniq.map((v) => ({ value: v, label: v }));
-  }, [display]);
+    return uniq.map((v) => ({ value: `${prefix}${v}`, label: v }));
+  }, [lastWord, prefix]);
 
   function commitMarathiIfNeeded() {
-    const q = display.trim();
+    const q = lastWord.trim();
     if (!q) return;
     if (!/[a-zA-Z]/.test(q)) {
-      props.onChange?.(q);
+      props.onChange?.(`${prefix}${q}`);
       return;
     }
     const mar = Sanscript.t(withAnusvaraHeuristic(q), "itrans", "devanagari");
-    setDisplay(mar);
-    props.onChange?.(mar);
+    const next = `${prefix}${mar}`;
+    setDisplay(next);
+    props.onChange?.(next);
   }
 
   return (
