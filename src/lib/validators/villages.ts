@@ -4,7 +4,7 @@ export const createVillageSchema = z.object({
   name: z.string().min(1),
   district: z.string().min(1),
   taluka: z.string().min(1),
-  code: z.string().min(1),
+  code: z.string().min(1).optional(),
   status: z.enum(["ACTIVE", "INACTIVE"]).optional(),
 });
 

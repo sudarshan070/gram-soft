@@ -55,6 +55,7 @@ export function SuperAdminCreateUserClient() {
         { key: "dash", label: "Dashboard", href: "/superadmin/dashboard" },
         { key: "users", label: "Users", href: "/superadmin/users" },
         { key: "new-user", label: "Create User", href: "/superadmin/users/new" },
+        { key: "villages", label: "Villages", href: "/superadmin/villages" },
       ]}
     >
       <Card title="Create User" style={{ maxWidth: 520 }}>
