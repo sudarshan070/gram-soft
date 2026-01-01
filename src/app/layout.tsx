@@ -6,6 +6,7 @@ import { ConfigProvider } from "antd";
 
 import { antdTheme } from "@/ui/theme";
 import { AntdReact19Patch } from "./AntdReact19Patch";
+import { AntdAppProvider } from "./AntdAppProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,7 +33,9 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <AntdRegistry>
           <AntdReact19Patch />
-          <ConfigProvider theme={antdTheme}>{children}</ConfigProvider>
+          <ConfigProvider theme={antdTheme}>
+            <AntdAppProvider>{children}</AntdAppProvider>
+          </ConfigProvider>
         </AntdRegistry>
       </body>
     </html>

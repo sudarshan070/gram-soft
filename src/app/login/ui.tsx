@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Card, Form, Input, Typography, message } from "antd";
+import { App, Button, Card, Form, Input, Typography } from "antd";
 import { useRouter } from "next/navigation";
 
 type ApiErrorShape = { code: string; message: string; details?: unknown };
@@ -14,6 +14,7 @@ type MeResponse = { user: { id: string; role: string; name: string; email: strin
 export function LoginForm() {
   const [form] = Form.useForm();
   const router = useRouter();
+  const { message } = App.useApp();
 
   async function onFinish(values: { email: string; password: string }) {
     const res = await fetch("/api/auth/login", {

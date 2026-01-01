@@ -4,17 +4,17 @@ import { Card, Typography } from "antd";
 
 import { AppShell } from "@/ui/layouts/AppShell";
 
-export function VillageDashboardClient(props: { village: { id: string; name: string } }) {
+import type { UserRole } from "@/server/models";
+
+export function VillageDashboardClient(props: {
+  role: UserRole;
+  village: { id: string; name: string };
+}) {
   return (
     <AppShell
       title={`Village Dashboard: ${props.village.name}`}
-      menuItems={[
-        {
-          key: "dash",
-          label: "Dashboard",
-          href: `/village/${props.village.id}/dashboard`,
-        },
-      ]}
+      role={props.role}
+      villageId={props.village.id}
     >
       <Card>
         <Typography.Title level={4} style={{ marginTop: 0 }}>
