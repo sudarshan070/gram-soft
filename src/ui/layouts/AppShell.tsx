@@ -1,8 +1,8 @@
 "use client";
 
-import { Layout, Menu } from "antd";
+import { Button, Layout, Menu } from "antd";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 
 import type { UserRole } from "@/server/models";
@@ -17,8 +17,20 @@ export function AppShell(props: {
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
   const menuItems = getNavItems({ role: props.role, villageId: props.villageId });
   const [collapsed, setCollapsed] = useState(false);
+
+  async function handleLogout() {
+    try {
+      const res = await fetch("/api/auth/logout", { method: "POST" });
+      if (res.ok) {
+        router.push("/login");
+      }
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  }
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
@@ -28,6 +40,7 @@ export function AppShell(props: {
         onCollapse={setCollapsed}
         breakpoint="lg"
         collapsedWidth={0}
+        style={{ position: "relative" }}
       >
         <div style={{
           height: 48,
@@ -48,6 +61,21 @@ export function AppShell(props: {
             label: <Link href={i.href}>{i.label}</Link>,
           }))}
         />
+        <div style={{ 
+          position: "absolute", 
+          bottom: 16, 
+          left: 16, 
+          right: 16 
+        }}>
+          <Button 
+            type="primary" 
+            danger 
+            block 
+            onClick={handleLogout}
+          >
+            Logout
+          </Button>
+        </div>
       </Sider>
       <Layout>
         <Header style={{ background: "white", display: "flex", alignItems: "center" }}>
