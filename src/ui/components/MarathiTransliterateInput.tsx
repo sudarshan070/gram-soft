@@ -2,7 +2,7 @@
 
 import { AutoComplete, Input } from "antd";
 import { useEffect, useMemo, useState } from "react";
-import Sanscript from "sanscript";
+import Sanscript from "@indic-transliteration/sanscript";
 
 export function MarathiTransliterateInput(props: {
   value?: string;                 // this will be MARATHI
