@@ -1,10 +1,12 @@
+import type { NextRequest } from "next/server";
+
 import { jsonError, jsonOk, notFound } from "@/lib/errors";
 import { requireVillageAccess } from "@/server/auth/require";
 import { getVillageStats } from "@/server/modules/dashboard/statsRepo";
 
-export async function GET(_: Request, ctx: { params: { villageId: string } }) {
+export async function GET(_: NextRequest, ctx: { params: Promise<{ villageId: string }> }) {
   try {
-    const { villageId } = ctx.params;
+    const { villageId } = await ctx.params;
     await requireVillageAccess(villageId);
 
     const stats = await getVillageStats(villageId);
