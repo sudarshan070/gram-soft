@@ -12,6 +12,7 @@ export function getNavItems(input: { role: UserRole; villageId?: string }): NavI
   if (input.role === "SUPER_ADMIN") {
     items.push({ key: "sa-dash", label: "Dashboard", href: "/superadmin/dashboard" });
     items.push({ key: "sa-users", label: "Users", href: "/superadmin/users" });
+    items.push({ key: "sa-villages", label: "Villages", href: "/superadmin/villages" });
     return items;
   }
 

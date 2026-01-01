@@ -50,6 +50,20 @@ export function SuperAdminVillagesClient(props: { villages: VillageRow[]; users:
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [deletingVillage, setDeletingVillage] = useState(false);
 
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [query, setQuery] = useState("");
+
+  const filteredVillages = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return villages;
+    return villages.filter((v) => 
+      v.name.toLowerCase().includes(q) ||
+      v.taluka.toLowerCase().includes(q) ||
+      v.district.toLowerCase().includes(q)
+    );
+  }, [villages, query]);
+
   const userOptions = useMemo(
     () =>
       props.users
@@ -80,23 +94,29 @@ export function SuperAdminVillagesClient(props: { villages: VillageRow[]; users:
   }
 
   async function onCreateVillage(values: { name: string; taluka: string; district: string }) {
-    const res = await fetch("/api/villages", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(values),
-    });
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/villages", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(values),
+      });
 
-    const json = (await res.json()) as ApiResponse<CreateVillageResponse>;
+      const json = (await res.json()) as ApiResponse<CreateVillageResponse>;
 
-    if (!res.ok || !json.success) {
-      message.error(!json.success ? json.error.message : "Create village failed");
-      return;
+      if (!res.ok || !json.success) {
+        message.error(!json.success ? json.error.message : "Create village failed");
+        return;
+      }
+
+      message.success("Village created");
+      setCreateModalOpen(false);
+      form.resetFields();
+      await refreshVillages();
+      router.refresh();
+    } finally {
+      setSubmitting(false);
     }
-
-    message.success("Village created");
-    form.resetFields();
-    await refreshVillages();
-    router.refresh();
   }
 
   async function openManageUsers(villageId: string) {
@@ -198,7 +218,35 @@ export function SuperAdminVillagesClient(props: { villages: VillageRow[]; users:
       title="Villages"
       role="SUPER_ADMIN"
     >
-      <Card title="Create Village" style={{ maxWidth: 520, marginBottom: 16 }}>
+      <Card title="Villages" extra={
+        <Button type="primary" onClick={() => setCreateModalOpen(true)}>
+          Create Village
+        </Button>
+      }>
+        <Space style={{ width: "100%", marginBottom: 12 }} wrap>
+          <Input
+            placeholder="Search by name, taluka, or district"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            allowClear
+            style={{ width: 320 }}
+          />
+          <Button onClick={() => setQuery("")}>Clear</Button>
+        </Space>
+        <Table
+          rowKey={(r) => r._id}
+          columns={columns}
+          dataSource={filteredVillages}
+          pagination={{ pageSize: 10 }}
+        />
+      </Card>
+
+      <Modal
+        title="Create Village"
+        open={createModalOpen}
+        onCancel={() => setCreateModalOpen(false)}
+        footer={null}
+      >
         <Form form={form} layout="vertical" onFinish={onCreateVillage}>
           <Form.Item
             name="name"
@@ -231,20 +279,11 @@ export function SuperAdminVillagesClient(props: { villages: VillageRow[]; users:
             <MarathiTransliterateInput placeholder="Type district" />
           </Form.Item>
 
-          <Button type="primary" htmlType="submit" block>
-            Save
+          <Button type="primary" htmlType="submit" block loading={submitting}>
+            Create
           </Button>
         </Form>
-      </Card>
-
-      <Card title="Villages">
-        <Table
-          rowKey={(r) => r._id}
-          columns={columns}
-          dataSource={villages}
-          pagination={{ pageSize: 10 }}
-        />
-      </Card>
+      </Modal>
 
       <Modal
         title="Attach Users"
