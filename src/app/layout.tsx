@@ -5,6 +5,7 @@ import { AntdRegistry } from "@ant-design/nextjs-registry";
 import { ConfigProvider } from "antd";
 
 import { antdTheme } from "@/ui/theme";
+import { AntdReact19Patch } from "./AntdReact19Patch";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,6 +31,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <AntdRegistry>
+          <AntdReact19Patch />
           <ConfigProvider theme={antdTheme}>{children}</ConfigProvider>
         </AntdRegistry>
       </body>
