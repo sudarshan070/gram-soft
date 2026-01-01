@@ -3,19 +3,32 @@
 import { Layout, Menu } from "antd";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
+
+import type { UserRole } from "@/server/models";
+import { getNavItems } from "@/ui/navigation";
 
 const { Sider, Content, Header } = Layout;
 
 export function AppShell(props: {
   title: string;
-  menuItems: Array<{ key: string; label: string; href: string }>;
+  role: UserRole;
+  villageId?: string;
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const menuItems = getNavItems({ role: props.role, villageId: props.villageId });
+  const [collapsed, setCollapsed] = useState(false);
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
-      <Sider collapsible>
+      <Sider
+        collapsible
+        collapsed={collapsed}
+        onCollapse={setCollapsed}
+        breakpoint="lg"
+        collapsedWidth={0}
+      >
         <div style={{
           height: 48,
           margin: 16,
@@ -30,7 +43,7 @@ export function AppShell(props: {
           theme="dark"
           mode="inline"
           selectedKeys={[pathname]}
-          items={props.menuItems.map((i) => ({
+          items={menuItems.map((i) => ({
             key: i.href,
             label: <Link href={i.href}>{i.label}</Link>,
           }))}
@@ -40,7 +53,7 @@ export function AppShell(props: {
         <Header style={{ background: "white", display: "flex", alignItems: "center" }}>
           <div style={{ fontWeight: 600 }}>{props.title}</div>
         </Header>
-        <Content style={{ padding: 24 }}>{props.children}</Content>
+        <Content style={{ padding: "clamp(12px, 2.5vw, 24px)" }}>{props.children}</Content>
       </Layout>
     </Layout>
   );

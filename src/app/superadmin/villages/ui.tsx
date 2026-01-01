@@ -196,12 +196,7 @@ export function SuperAdminVillagesClient(props: { villages: VillageRow[]; users:
   return (
     <AppShell
       title="Villages"
-      menuItems={[
-        { key: "dash", label: "Dashboard", href: "/superadmin/dashboard" },
-        { key: "users", label: "Users", href: "/superadmin/users" },
-        { key: "new-user", label: "Create User", href: "/superadmin/users/new" },
-        { key: "villages", label: "Villages", href: "/superadmin/villages" },
-      ]}
+      role="SUPER_ADMIN"
     >
       <Card title="Create Village" style={{ maxWidth: 520, marginBottom: 16 }}>
         <Form form={form} layout="vertical" onFinish={onCreateVillage}>

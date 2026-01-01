@@ -47,6 +47,29 @@ export function jsonError(err: unknown) {
 
 export function normalizeError(err: unknown): ApiError {
   if (err instanceof ApiError) return err;
+
+  if (typeof err === "object" && err !== null) {
+    const anyErr = err as {
+      code?: unknown;
+      message?: unknown;
+      keyValue?: unknown;
+      keyPattern?: unknown;
+    };
+
+    if (anyErr.code === 11000) {
+      return new ApiError({
+        code: "CONFLICT",
+        status: 409,
+        message: "Duplicate value",
+        details: {
+          message: anyErr.message,
+          keyValue: anyErr.keyValue,
+          keyPattern: anyErr.keyPattern,
+        },
+      });
+    }
+  }
+
   if (err instanceof Error) {
     return new ApiError({
       code: "INTERNAL_ERROR",

@@ -10,12 +10,7 @@ export function SuperAdminDashboardClient(props: {
   return (
     <AppShell
       title="Super Admin Dashboard"
-      menuItems={[
-        { key: "dash", label: "Dashboard", href: "/superadmin/dashboard" },
-        { key: "users", label: "Users", href: "/superadmin/users" },
-        { key: "new-user", label: "Create User", href: "/superadmin/users/new" },
-        { key: "villages", label: "Villages", href: "/superadmin/villages" },
-      ]}
+      role="SUPER_ADMIN"
     >
       <Row gutter={[16, 16]}>
         <Col xs={24} sm={8}>

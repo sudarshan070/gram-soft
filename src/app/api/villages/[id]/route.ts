@@ -1,11 +1,12 @@
 import mongoose from "mongoose";
+import type { NextRequest } from "next/server";
 
 import { jsonError, jsonOk, badRequest, notFound } from "@/lib/errors";
 import { updateVillageSchema } from "@/lib/validators/villages";
 import { requireRole } from "@/server/auth/require";
 import { deleteVillage, findVillageById, updateVillage } from "@/server/modules/villages/villageRepo";
 
-export async function GET(_: Request, ctx: { params: Promise<{ id: string }> }) {
+export async function GET(_: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   try {
     await requireRole(["SUPER_ADMIN", "ADMIN"]);
     const { id } = await ctx.params;
@@ -17,7 +18,7 @@ export async function GET(_: Request, ctx: { params: Promise<{ id: string }> }) 
   }
 }
 
-export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }> }) {
+export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   try {
     await requireRole("SUPER_ADMIN");
     const { id } = await ctx.params;

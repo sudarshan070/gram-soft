@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Card, Form, Input, Typography, message } from "antd";
+import { App, Button, Card, Form, Input, Typography } from "antd";
 import { useRouter } from "next/navigation";
 
 type ApiErrorShape = { code: string; message: string; details?: unknown };
@@ -14,6 +14,7 @@ type MeResponse = { user: { id: string; role: string; name: string; email: strin
 export function LoginForm() {
   const [form] = Form.useForm();
   const router = useRouter();
+  const { message } = App.useApp();
 
   async function onFinish(values: { email: string; password: string }) {
     const res = await fetch("/api/auth/login", {
@@ -49,7 +50,7 @@ export function LoginForm() {
 
   return (
     <div style={{ minHeight: "100vh", display: "grid", placeItems: "center", padding: 24 }}>
-      <Card style={{ width: 420 }}>
+      <Card style={{ width: "100%", maxWidth: 420 }}>
         <Typography.Title level={3} style={{ marginTop: 0 }}>
           Login
         </Typography.Title>
