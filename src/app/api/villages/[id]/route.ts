@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import type { NextRequest } from "next/server";
 
 import { jsonError, jsonOk, badRequest, notFound } from "@/lib/errors";
@@ -35,11 +36,15 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
   }
 }
 
-export async function DELETE(_: NextRequest, ctx: { params: Promise<{ id: string }> }) {
+export async function DELETE(_: Request, ctx: { params: Promise<{ id: string }> }) {
   try {
     await requireRole("SUPER_ADMIN");
     const { id } = await ctx.params;
-    await deleteVillage(id);
+
+    if (!mongoose.isValidObjectId(id)) throw badRequest("Invalid village id");
+
+    const deleted = await deleteVillage(id);
+    if (!deleted) throw notFound("Village not found");
     return jsonOk({ ok: true });
   } catch (err) {
     return jsonError(err);

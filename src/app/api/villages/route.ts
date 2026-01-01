@@ -3,6 +3,10 @@ import { createVillageSchema } from "@/lib/validators/villages";
 import { requireRole } from "@/server/auth/require";
 import { createVillage, listVillages } from "@/server/modules/villages/villageRepo";
 
+function generateVillageCode() {
+  return `V${Date.now().toString(36).toUpperCase()}`;
+}
+
 export async function GET() {
   try {
     await requireRole(["SUPER_ADMIN", "ADMIN"]);
@@ -25,7 +29,7 @@ export async function POST(req: Request) {
       name: parsed.data.name,
       district: parsed.data.district,
       taluka: parsed.data.taluka,
-      code: parsed.data.code,
+      code: parsed.data.code ?? generateVillageCode(),
       status: parsed.data.status ?? "ACTIVE",
     });
 

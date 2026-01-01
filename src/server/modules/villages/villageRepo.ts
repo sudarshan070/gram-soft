@@ -1,5 +1,7 @@
+import mongoose from "mongoose";
+
 import { connectDb } from "@/server/db/mongoose";
-import { VillageModel } from "@/server/models";
+import { UserVillageAccessModel, VillageModel } from "@/server/models";
 
 export async function listVillages() {
   await connectDb();
@@ -40,5 +42,13 @@ export async function updateVillage(
 
 export async function deleteVillage(id: string) {
   await connectDb();
-  await VillageModel.findByIdAndDelete(id);
+
+  const villageObjectId = new mongoose.Types.ObjectId(id);
+
+  await UserVillageAccessModel.deleteMany({
+    villageId: villageObjectId,
+  });
+
+  const deleted = await VillageModel.findByIdAndDelete(villageObjectId);
+  return deleted ? deleted.toObject() : null;
 }
