@@ -50,7 +50,7 @@ export function LoginForm() {
 
   return (
     <div style={{ minHeight: "100vh", display: "grid", placeItems: "center", padding: 24 }}>
-      <Card style={{ width: 420 }}>
+      <Card style={{ width: "100%", maxWidth: 420 }}>
         <Typography.Title level={3} style={{ marginTop: 0 }}>
           Login
         </Typography.Title>

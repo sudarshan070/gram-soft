@@ -51,6 +51,7 @@ export async function updateUser(
   id: string,
   params: {
     name?: string;
+    email?: string;
     passwordHash?: string;
     role?: "SUPER_ADMIN" | "ADMIN" | "USER";
     status?: "ACTIVE" | "INACTIVE";
@@ -61,11 +62,12 @@ export async function updateUser(
 
   const update: Record<string, unknown> = {};
   if (params.name !== undefined) update.name = params.name;
+  if (params.email !== undefined) update.email = params.email;
   if (params.passwordHash !== undefined) update.passwordHash = params.passwordHash;
   if (params.role !== undefined) update.role = params.role;
   if (params.status !== undefined) update.status = params.status;
 
-  const user = await UserModel.findByIdAndUpdate(id, update, { new: true });
+  const user = await UserModel.findByIdAndUpdate(id, update, { new: true, runValidators: true });
 
   if (params.villageIds) {
     await UserVillageAccessModel.deleteMany({ userId: id });
