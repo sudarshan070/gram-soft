@@ -13,6 +13,32 @@ export function getNavItems(input: { role: UserRole; villageId?: string }): NavI
     items.push({ key: "sa-dash", label: "Dashboard", href: "/superadmin/dashboard" });
     items.push({ key: "sa-users", label: "Users", href: "/superadmin/users" });
     items.push({ key: "sa-villages", label: "Villages", href: "/superadmin/villages" });
+    items.push({
+      key: "sa-global-rates",
+      label: "कराचे दर (ग्लोबल)",
+      href: "/superadmin/rates/construction-land",
+    });
+    items.push({
+      key: "sa-water-supply-rates",
+      label: "पाणी पुरवठा कराचे दर",
+      href: "/superadmin/rates/water-supply",
+    });
+    items.push({
+      key: "sa-health-tax-slabs",
+      label: "आरोग्य कर (Slab)",
+      href: "/superadmin/rates/health-tax",
+    });
+    items.push({
+      key: "sa-electricity-supply-tax-slabs",
+      label: "विजपुरवठा कर (Slab)",
+      href: "/superadmin/rates/electricity-tax",
+    });
+    items.push({
+      key: "sa-divabatti-tax-slabs",
+      label: "दिवाबत्ती कर (Slab)",
+      href: "/superadmin/rates/divabatti-tax",
+    });
+
     return items;
   }
 
