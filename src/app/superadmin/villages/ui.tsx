@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Card, Form, Input, Modal, Select, Space, Table, message } from "antd";
+import { App, Button, Card, Form, Input, Modal, Select, Space, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -36,6 +36,7 @@ type GetVillageUsersResponse = { userIds: string[] };
 
 export function SuperAdminVillagesClient(props: { villages: VillageRow[]; users: UserRow[] }) {
   const router = useRouter();
+  const { message } = App.useApp();
   const [form] = Form.useForm();
   const [villages, setVillages] = useState<VillageRow[]>(props.villages);
 
