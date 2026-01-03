@@ -37,15 +37,8 @@ export function LoginForm() {
       return;
     }
 
-    const meRes = await fetch("/api/auth/me");
-    const meJson = (await meRes.json()) as ApiResponse<MeResponse>;
-    const villageIds: string[] = meJson.success ? meJson.data.user.villageIds : [];
-
-    if (villageIds.length) {
-      router.replace(`/village/${villageIds[0]}/dashboard`);
-    } else {
-      message.info("No villages assigned to this account yet.");
-    }
+    // All other users go to user dashboard
+    router.replace("/user/dashboard");
   }
 
   return (
