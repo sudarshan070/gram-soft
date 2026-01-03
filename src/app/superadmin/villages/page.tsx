@@ -8,6 +8,9 @@ export default async function SuperAdminVillagesPage() {
   await requireRole("SUPER_ADMIN");
 
   const [villages, users] = await Promise.all([listVillages(), listUsers()]);
+    
+  console.log("Villages: -----", villages);
+  console.log("Users: ------", users);
 
   return (
     <SuperAdminVillagesClient

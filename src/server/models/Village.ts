@@ -8,6 +8,7 @@ export type VillageDocument = {
   district: string;
   taluka: string;
   code: string;
+  userIds: mongoose.Types.ObjectId[];
   status: Status;
   createdAt: Date;
 };
@@ -18,6 +19,7 @@ const villageSchema = new Schema<VillageDocument>(
     district: { type: String, required: true, trim: true },
     taluka: { type: String, required: true, trim: true },
     code: { type: String, required: true, trim: true },
+    userIds: [{ type: Schema.Types.ObjectId, ref: "User" }],
     status: { type: String, required: true, enum: ["ACTIVE", "INACTIVE"], default: "ACTIVE" },
     createdAt: { type: Date, required: true, default: () => new Date() },
   },

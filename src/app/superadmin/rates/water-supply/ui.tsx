@@ -82,7 +82,7 @@ export function SuperAdminGlobalWaterSupplyTaxRatesClient(props: { rates: RateRo
 
     setSubmitting(true);
     try {
-      const res = await fetch(`/api/global-rates/water-supply/${editing._id}`, {
+      const res = await fetch(`/api/rates/water-supply/${editing._id}`, {
         method: "PATCH",
         headers: { "content-type": "application/json" },
         body: JSON.stringify(values),
