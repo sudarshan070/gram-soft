@@ -11,6 +11,7 @@ export async function GET() {
   try {
     await requireRole(["SUPER_ADMIN", "ADMIN"]);
     const villages = await listVillages();
+    console.log(villages, '****************')
     return jsonOk({ villages });
   } catch (err) {
     return jsonError(err);

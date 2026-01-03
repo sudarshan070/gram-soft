@@ -8,6 +8,7 @@ export type UserDocument = {
   email: string;
   passwordHash: string;
   role: UserRole;
+  villageId: mongoose.Types.ObjectId | null;
   status: Status;
   createdAt: Date;
 };
@@ -23,6 +24,7 @@ const userSchema = new Schema<UserDocument>(
       enum: ["SUPER_ADMIN", "ADMIN", "USER"],
       default: "USER",
     },
+    villageId: { type: Schema.Types.ObjectId, ref: "Village", default: null },
     status: { type: String, required: true, enum: ["ACTIVE", "INACTIVE"], default: "ACTIVE" },
     createdAt: { type: Date, required: true, default: () => new Date() },
   },

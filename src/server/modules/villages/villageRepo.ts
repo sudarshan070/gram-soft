@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 import { connectDb } from "@/server/db/mongoose";
-import { UserVillageAccessModel, VillageModel } from "@/server/models";
+import { UserModel, UserVillageAccessModel, VillageModel } from "@/server/models";
 
 export async function listVillages() {
   await connectDb();
@@ -48,6 +48,8 @@ export async function deleteVillage(id: string) {
   await UserVillageAccessModel.deleteMany({
     villageId: villageObjectId,
   });
+
+  await UserModel.updateMany({ villageId: villageObjectId }, { $set: { villageId: null } });
 
   const deleted = await VillageModel.findByIdAndDelete(villageObjectId);
   return deleted ? deleted.toObject() : null;

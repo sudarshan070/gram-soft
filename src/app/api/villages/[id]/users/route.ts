@@ -3,10 +3,10 @@ import { setVillageUsersSchema } from "@/lib/validators/villageUsers";
 import { requireRole } from "@/server/auth/require";
 import { listUserIdsForVillage, setUsersForVillage } from "@/server/modules/villages/villageUserAccessRepo";
 
-export async function GET(_: Request, ctx: { params: { id: string } }) {
+export async function GET(_: Request, ctx: { params: Promise<{ id: string }> }) {
   try {
     await requireRole("SUPER_ADMIN");
-    const { id } = ctx.params;
+    const { id } = await ctx.params;
 
     const userIds = await listUserIdsForVillage(id);
     return jsonOk({ userIds });
@@ -15,10 +15,10 @@ export async function GET(_: Request, ctx: { params: { id: string } }) {
   }
 }
 
-export async function PUT(req: Request, ctx: { params: { id: string } }) {
+export async function PUT(req: Request, ctx: { params: Promise<{ id: string }> }) {
   try {
     await requireRole("SUPER_ADMIN");
-    const { id } = ctx.params;
+    const { id } = await ctx.params;
 
     const body = await req.json();
     const parsed = setVillageUsersSchema.safeParse(body);
