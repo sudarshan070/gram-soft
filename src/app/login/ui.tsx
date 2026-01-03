@@ -3,6 +3,8 @@
 import { App, Button, Card, Form, Input, Typography } from "antd";
 import { useRouter } from "next/navigation";
 
+import { UserRole } from "@/server/models/types";
+
 type ApiErrorShape = { code: string; message: string; details?: unknown };
 type ApiResponse<T> =
   | { success: true; data: T }
@@ -32,7 +34,7 @@ export function LoginForm() {
 
     const role = json.data.user.role;
 
-    if (role === "SUPER_ADMIN") {
+    if (role === UserRole.SUPER_ADMIN) {
       router.replace("/superadmin/dashboard");
       return;
     }

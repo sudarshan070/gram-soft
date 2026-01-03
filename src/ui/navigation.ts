@@ -1,4 +1,4 @@
-import type { UserRole } from "@/server/models";
+import { UserRole } from "@/server/models/types";
 
 export type NavItem = {
   key: string;
@@ -9,7 +9,7 @@ export type NavItem = {
 export function getNavItems(input: { role: UserRole; villageId?: string }): NavItem[] {
   const items: NavItem[] = [];
 
-  if (input.role === "SUPER_ADMIN") {
+  if (input.role === UserRole.SUPER_ADMIN) {
     items.push({ key: "sa-dash", label: "Dashboard", href: "/superadmin/dashboard" });
     items.push({ key: "sa-users", label: "Users", href: "/superadmin/users" });
     items.push({ key: "sa-villages", label: "Villages", href: "/superadmin/villages" });
@@ -43,7 +43,7 @@ export function getNavItems(input: { role: UserRole; villageId?: string }): NavI
   }
 
   // Regular users (ADMIN/USER) without village access
-  if (!input.villageId && (input.role === "ADMIN" || input.role === "USER")) {
+  if (!input.villageId && (input.role === UserRole.ADMIN || input.role === UserRole.USER)) {
     items.push({ key: "u-dash", label: "Dashboard", href: "/user/dashboard" });
     return items;
   }

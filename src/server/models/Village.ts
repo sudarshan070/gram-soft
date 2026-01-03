@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 
-import type { Status } from "./types";
+import { Status } from "./types";
 
 export type VillageDocument = {
   _id: mongoose.Types.ObjectId;
@@ -20,7 +20,7 @@ const villageSchema = new Schema<VillageDocument>(
     taluka: { type: String, required: true, trim: true },
     code: { type: String, required: true, trim: true },
     userIds: [{ type: Schema.Types.ObjectId, ref: "User" }],
-    status: { type: String, required: true, enum: ["ACTIVE", "INACTIVE"], default: "ACTIVE" },
+    status: { type: String, required: true, enum: Object.values(Status), default: Status.ACTIVE },
     createdAt: { type: Date, required: true, default: () => new Date() },
   },
   { collection: "villages" },

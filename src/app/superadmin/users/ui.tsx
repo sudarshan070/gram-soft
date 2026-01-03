@@ -1,18 +1,19 @@
 "use client";
 
-import { App, Button, Card, Form, Input, Modal, Select, Space, Table } from "antd";
+import { App, Button, Card, Form, Input, Modal, Select, Space, Table, Tooltip } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 
 import { AppShell } from "@/ui/layouts/AppShell";
+import { UserRole, Status } from "@/server/models/types";
 
 type UserRow = {
   _id: string;
   name: string;
   email: string;
-  role: "SUPER_ADMIN" | "ADMIN" | "USER";
-  status: "ACTIVE" | "INACTIVE";
+  role: UserRole;
+  status: Status;
 };
 
 type ApiErrorShape = { code: string; message: string; details?: unknown };
@@ -38,8 +39,13 @@ export function SuperAdminUsersClient(props: { users: UserRow[] }) {
   const [form] = Form.useForm();
 
   const [query, setQuery] = useState("");
-  const [roleFilter, setRoleFilter] = useState<UserRow["role"] | "ALL">("ALL");
-  const [statusFilter, setStatusFilter] = useState<UserRow["status"] | "ALL">("ALL");
+  const [roleFilter, setRoleFilter] = useState<UserRole | "ALL">("ALL");
+  const [statusFilter, setStatusFilter] = useState<Status | "ALL">("ALL");
+
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [deleteUserId, setDeleteUserId] = useState<string | null>(null);
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
+  const [deletingUser, setDeletingUser] = useState(false);
 
   const [editOpen, setEditOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<UserRow | null>(null);
@@ -49,8 +55,8 @@ export function SuperAdminUsersClient(props: { users: UserRow[] }) {
   async function onEditSubmit(values: {
     name?: string;
     email?: string;
-    role?: "SUPER_ADMIN" | "ADMIN" | "USER";
-    status?: "ACTIVE" | "INACTIVE";
+    role?: UserRole;
+    status?: Status;
     password?: string;
   }) {
     if (!editingUser) return;
@@ -101,24 +107,32 @@ export function SuperAdminUsersClient(props: { users: UserRow[] }) {
   }
 
   function confirmDelete(user: UserRow) {
-    modal.confirm({
-      title: "Delete user?",
-      content: `Are you sure you want to delete ${user.name}?`,
-      okText: "Delete",
-      okButtonProps: { danger: true },
-      cancelText: "Cancel",
-      async onOk() {
-        const res = await fetch(`/api/users/${user._id}`, { method: "DELETE" });
-        const json = (await res.json()) as ApiResponse<{ ok: true }>;
-        if (!res.ok || !json.success) {
-          message.error(!json.success ? json.error.message : "Delete user failed");
-          return;
-        }
+    setDeleteUserId(user._id);
+    setDeleteModalOpen(true);
+  }
 
-        message.success("User deleted");
-        router.refresh();
-      },
-    });
+  async function confirmDeleteUser() {
+    if (!deleteUserId) return;
+    
+    setDeletingUser(true);
+    try {
+      const res = await fetch(`/api/users/${deleteUserId}`, { method: "DELETE" });
+      const json = (await res.json()) as ApiResponse<{ ok: true }>;
+      if (!res.ok || !json.success) {
+        message.error(!json.success ? json.error.message : "Delete user failed");
+        return;
+      }
+
+      message.success("User deleted");
+      setDeleteModalOpen(false);
+      setDeleteUserId(null);
+      setDeleteConfirmText("");
+      router.refresh();
+    } catch (error) {
+      message.error("Delete user failed");
+    } finally {
+      setDeletingUser(false);
+    }
   }
 
   const columns: ColumnsType<UserRow> = [
@@ -131,12 +145,59 @@ export function SuperAdminUsersClient(props: { users: UserRow[] }) {
       key: "actions",
       render: (_: unknown, record) => (
         <Space>
-          <Button type="link" onClick={() => openEdit(record)}>
-            Edit
-          </Button>
-          <Button type="link" danger onClick={() => confirmDelete(record)}>
-            Delete
-          </Button>
+          <Tooltip title="Edit user details and permissions">
+            <Button 
+              type="default" 
+              size="small"
+              onClick={() => openEdit(record)}
+              style={{ 
+                border: '1px solid #52c41a',
+                background: 'linear-gradient(135deg, #73d13d 0%, #52c41a 100%)',
+                boxShadow: '0 2px 0 rgba(82, 196, 26, 0.03)',
+                transition: 'all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1)',
+                color: '#ffffff'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(82, 196, 26, 0.15)';
+                e.currentTarget.style.color = '#ffffff';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 2px 0 rgba(82, 196, 26, 0.03)';
+                e.currentTarget.style.color = '#ffffff';
+              }}
+            >
+              Edit
+            </Button>
+          </Tooltip>
+          <Tooltip title="Permanently delete this user">
+            <Button 
+              type="default" 
+              danger 
+              size="small"
+              onClick={() => confirmDelete(record)}
+              style={{ 
+                border: '1px solid #ff4d4f',
+                background: 'linear-gradient(135deg, #ff7875 0%, #ff4d4f 100%)',
+                boxShadow: '0 2px 0 rgba(255, 77, 79, 0.03)',
+                transition: 'all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1)',
+                color: '#ffffff'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(255, 77, 79, 0.15)';
+                e.currentTarget.style.color = '#ffffff';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 2px 0 rgba(255, 77, 79, 0.03)';
+                e.currentTarget.style.color = '#ffffff';
+              }}
+            >
+              Delete
+            </Button>
+          </Tooltip>
         </Space>
       ),
     },
@@ -160,8 +221,8 @@ export function SuperAdminUsersClient(props: { users: UserRow[] }) {
     name: string;
     email: string;
     password: string;
-    role?: "SUPER_ADMIN" | "ADMIN" | "USER";
-    status?: "ACTIVE" | "INACTIVE";
+    role?: UserRole;
+    status?: Status;
   }) {
     setSubmitting(true);
     try {
@@ -190,7 +251,7 @@ export function SuperAdminUsersClient(props: { users: UserRow[] }) {
   return (
     <AppShell
       title="Users"
-      role="SUPER_ADMIN"
+      role={UserRole.SUPER_ADMIN}
     >
       <Card
         title="Users"
@@ -214,9 +275,9 @@ export function SuperAdminUsersClient(props: { users: UserRow[] }) {
             style={{ width: 160 }}
             options={[
               { value: "ALL", label: "All roles" },
-              { value: "USER", label: "USER" },
-              { value: "ADMIN", label: "ADMIN" },
-              { value: "SUPER_ADMIN", label: "SUPER_ADMIN" },
+              { value: UserRole.USER, label: "USER" },
+              { value: UserRole.ADMIN, label: "ADMIN" },
+              { value: UserRole.SUPER_ADMIN, label: "SUPER_ADMIN" },
             ]}
           />
           <Select
@@ -225,8 +286,8 @@ export function SuperAdminUsersClient(props: { users: UserRow[] }) {
             style={{ width: 160 }}
             options={[
               { value: "ALL", label: "All status" },
-              { value: "ACTIVE", label: "ACTIVE" },
-              { value: "INACTIVE", label: "INACTIVE" },
+              { value: Status.ACTIVE, label: "ACTIVE" },
+              { value: Status.INACTIVE, label: "INACTIVE" },
             ]}
           />
           <Button
@@ -258,7 +319,7 @@ export function SuperAdminUsersClient(props: { users: UserRow[] }) {
           form={form}
           layout="vertical"
           onFinish={onCreate}
-          initialValues={{ role: "USER", status: "ACTIVE" }}
+          initialValues={{ role: UserRole.USER, status: Status.ACTIVE }}
         >
           <Form.Item
             name="name"
@@ -278,17 +339,17 @@ export function SuperAdminUsersClient(props: { users: UserRow[] }) {
           <Form.Item name="role" label="Role" rules={[{ required: true }]}>
             <Select
               options={[
-                { value: "USER", label: "USER" },
-                { value: "ADMIN", label: "ADMIN" },
-                { value: "SUPER_ADMIN", label: "SUPER_ADMIN" },
+                { value: UserRole.USER, label: "USER" },
+                { value: UserRole.ADMIN, label: "ADMIN" },
+                { value: UserRole.SUPER_ADMIN, label: "SUPER_ADMIN" },
               ]}
             />
           </Form.Item>
           <Form.Item name="status" label="Status" rules={[{ required: true }]}>
             <Select
               options={[
-                { value: "ACTIVE", label: "ACTIVE" },
-                { value: "INACTIVE", label: "INACTIVE" },
+                { value: Status.ACTIVE, label: "ACTIVE" },
+                { value: Status.INACTIVE, label: "INACTIVE" },
               ]}
             />
           </Form.Item>
@@ -313,7 +374,7 @@ export function SuperAdminUsersClient(props: { users: UserRow[] }) {
           form={editForm}
           layout="vertical"
           onFinish={onEditSubmit}
-          initialValues={{ role: "USER", status: "ACTIVE" }}
+          initialValues={{ role: UserRole.USER, status: Status.ACTIVE }}
         >
           <Form.Item name="name" label="Name" rules={[{ required: true }]}>
             <Input placeholder="Enter user name" />
@@ -327,17 +388,17 @@ export function SuperAdminUsersClient(props: { users: UserRow[] }) {
           <Form.Item name="role" label="Role" rules={[{ required: true }]}>
             <Select
               options={[
-                { value: "USER", label: "USER" },
-                { value: "ADMIN", label: "ADMIN" },
-                { value: "SUPER_ADMIN", label: "SUPER_ADMIN" },
+                { value: UserRole.USER, label: "USER" },
+                { value: UserRole.ADMIN, label: "ADMIN" },
+                { value: UserRole.SUPER_ADMIN, label: "SUPER_ADMIN" },
               ]}
             />
           </Form.Item>
           <Form.Item name="status" label="Status" rules={[{ required: true }]}>
             <Select
               options={[
-                { value: "ACTIVE", label: "ACTIVE" },
-                { value: "INACTIVE", label: "INACTIVE" },
+                { value: Status.ACTIVE, label: "ACTIVE" },
+                { value: Status.INACTIVE, label: "INACTIVE" },
               ]}
             />
           </Form.Item>
@@ -346,6 +407,29 @@ export function SuperAdminUsersClient(props: { users: UserRow[] }) {
             Save
           </Button>
         </Form>
+      </Modal>
+
+      <Modal
+        title="Delete User"
+        open={deleteModalOpen}
+        onCancel={() => {
+          setDeleteModalOpen(false);
+          setDeleteUserId(null);
+          setDeleteConfirmText("");
+        }}
+        okText="Delete"
+        okButtonProps={{ danger: true, disabled: deleteConfirmText !== "delete" }}
+        confirmLoading={deletingUser}
+        onOk={() => {
+          if (deleteUserId) {
+            confirmDeleteUser();
+          }
+        }}
+      >
+        <div style={{ marginBottom: 12 }}>
+          Are you sure you want to delete this user? Confirm by typing <b>delete</b> below.
+        </div>
+        <Input value={deleteConfirmText} onChange={(e) => setDeleteConfirmText(e.target.value)} />
       </Modal>
     </AppShell>
   );
