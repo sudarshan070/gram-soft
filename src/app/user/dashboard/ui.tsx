@@ -2,11 +2,12 @@
 
 import { Card } from "antd";
 
+import { UserRole } from "@/server/models/types";
 import { UserDashboard } from "@/ui/layouts/UserDashboard";
 
 export function UserDashboardClient({ name }: { name: string }) {
   return (
-    <UserDashboard title="Dashboard" role="USER">
+    <UserDashboard title="Dashboard" role={UserRole.USER}>
       <div style={{ 
         display: "flex", 
         justifyContent: "center", 

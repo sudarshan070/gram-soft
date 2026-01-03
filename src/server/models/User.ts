@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 
-import type { Status, UserRole } from "./types";
+import { UserRole, Status } from "./types";
 
 export type UserDocument = {
   _id: mongoose.Types.ObjectId;
@@ -21,11 +21,11 @@ const userSchema = new Schema<UserDocument>(
     role: {
       type: String,
       required: true,
-      enum: ["SUPER_ADMIN", "ADMIN", "USER"],
-      default: "USER",
+      enum: Object.values(UserRole),
+      default: UserRole.USER,
     },
     villageId: { type: Schema.Types.ObjectId, ref: "Village", default: null },
-    status: { type: String, required: true, enum: ["ACTIVE", "INACTIVE"], default: "ACTIVE" },
+    status: { type: String, required: true, enum: Object.values(Status), default: Status.ACTIVE },
     createdAt: { type: Date, required: true, default: () => new Date() },
   },
   { collection: "users" },
