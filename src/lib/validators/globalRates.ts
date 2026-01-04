@@ -1,19 +1,20 @@
 import { z } from "zod";
 
+// field is likely calculated or derived. Leaving schema as is but adding coercion.
 export const createGlobalConstructionLandRateSchema = z.object({
-  propertyTypeEn: z.string().trim().min(1),
   propertyTypeMr: z.string().trim().min(1),
-  constructionRate: z.number().nonnegative(),
-  landRate: z.number().nonnegative(),
+  constructionRate: z.coerce.number().nonnegative(),
+  constructionLandRate: z.coerce.number().nonnegative(),
+  landRate: z.coerce.number().nonnegative(),
+  approvedRate: z.coerce.number().nonnegative(),
   effectiveFrom: z.coerce.date(),
 });
 
 export const updateGlobalConstructionLandRateSchema = createGlobalConstructionLandRateSchema.partial();
 
 export const createGlobalWaterSupplyTaxRateSchema = z.object({
-  waterTaxTypeEn: z.string().trim().min(1),
   waterTaxTypeMr: z.string().trim().min(1),
-  rate: z.number().nonnegative(),
+  rate: z.coerce.number().nonnegative(),
   effectiveFrom: z.coerce.date(),
 });
 
@@ -21,9 +22,9 @@ export const updateGlobalWaterSupplyTaxRateSchema = createGlobalWaterSupplyTaxRa
 
 export const createGlobalSlabTaxRateSchema = z
   .object({
-    slabFromSqFt: z.number().nonnegative(),
-    slabToSqFt: z.number().nonnegative().nullable().optional(),
-    rate: z.number().nonnegative(),
+    slabFromSqFt: z.coerce.number().nonnegative(),
+    slabToSqFt: z.coerce.number().nonnegative().nullable().optional(),
+    rate: z.coerce.number().nonnegative(),
     effectiveFrom: z.coerce.date(),
   })
   .superRefine((val, ctx) => {
