@@ -7,6 +7,7 @@ import { ConfigProvider } from "antd";
 import { antdTheme } from "@/ui/theme";
 import { AntdReact19Patch } from "./AntdReact19Patch";
 import { AntdAppProvider } from "./AntdAppProvider";
+import { AuthErrorBoundary } from "@/components/AuthErrorBoundary";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,12 +32,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <AntdRegistry>
-          <AntdReact19Patch />
-          <ConfigProvider theme={antdTheme}>
-            <AntdAppProvider>{children}</AntdAppProvider>
-          </ConfigProvider>
-        </AntdRegistry>
+        <AuthErrorBoundary>
+          <AntdRegistry>
+            <AntdReact19Patch />
+            <ConfigProvider theme={antdTheme}>
+              <AntdAppProvider>{children}</AntdAppProvider>
+            </ConfigProvider>
+          </AntdRegistry>
+        </AuthErrorBoundary>
       </body>
     </html>
   );

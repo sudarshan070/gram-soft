@@ -2,6 +2,7 @@ import { jsonError, jsonOk, badRequest } from "@/lib/errors";
 import { createVillageSchema } from "@/lib/validators/villages";
 import { requireRole } from "@/server/auth/require";
 import { createVillage, listVillages } from "@/server/modules/villages/villageRepo";
+import { UserRole } from "@/server/models/types";
 
 function generateVillageCode() {
   return `V${Date.now().toString(36).toUpperCase()}`;
@@ -9,9 +10,8 @@ function generateVillageCode() {
 
 export async function GET() {
   try {
-    await requireRole(["SUPER_ADMIN", "ADMIN"]);
+    await requireRole([UserRole.SUPER_ADMIN, UserRole.ADMIN]);
     const villages = await listVillages();
-    console.log(villages, '****************')
     return jsonOk({ villages });
   } catch (err) {
     return jsonError(err);
@@ -20,7 +20,7 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    await requireRole("SUPER_ADMIN");
+    await requireRole(UserRole.SUPER_ADMIN);
 
     const body = await req.json();
     const parsed = createVillageSchema.safeParse(body);

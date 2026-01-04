@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { AppShell } from "@/ui/layouts/AppShell";
 import { MarathiTransliterateInput } from "@/ui/components/MarathiTransliterateInput";
 import { UserRole } from "@/server/models/types";
+import "@/styles/action-buttons.css";
 
 type ApiErrorShape = { code: string; message: string; details?: unknown };
 type ApiResponse<T> =
@@ -211,23 +212,7 @@ export function SuperAdminVillagesClient(props: { villages: VillageRow[]; users:
               type="default" 
               size="small"
               onClick={() => openManageUsers(row._id)}
-              style={{ 
-                border: '1px solid #1890ff',
-                background: 'linear-gradient(135deg, #40a9ff 0%, #1890ff 100%)',
-                boxShadow: '0 2px 0 rgba(24, 144, 255, 0.03)',
-                transition: 'all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1)',
-                color: '#ffffff'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)';
-                e.currentTarget.style.boxShadow = '0 4px 12px rgba(24, 144, 255, 0.15)';
-                e.currentTarget.style.color = '#ffffff';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                e.currentTarget.style.boxShadow = '0 2px 0 rgba(24, 144, 255, 0.03)';
-                e.currentTarget.style.color = '#ffffff';
-              }}
+              className="action-button action-button-scale attach-users-button"
             >
               Attach Users
             </Button>
@@ -238,23 +223,7 @@ export function SuperAdminVillagesClient(props: { villages: VillageRow[]; users:
               danger 
               size="small"
               onClick={() => openDeleteVillage(row._id)}
-              style={{ 
-                border: '1px solid #ff4d4f',
-                background: 'linear-gradient(135deg, #ff7875 0%, #ff4d4f 100%)',
-                boxShadow: '0 2px 0 rgba(255, 77, 79, 0.03)',
-                transition: 'all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1)',
-                color: '#ffffff'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)';
-                e.currentTarget.style.boxShadow = '0 4px 12px rgba(255, 77, 79, 0.15)';
-                e.currentTarget.style.color = '#ffffff';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                e.currentTarget.style.boxShadow = '0 2px 0 rgba(255, 77, 79, 0.03)';
-                e.currentTarget.style.color = '#ffffff';
-              }}
+              className="action-button action-button-scale delete-button"
             >
               Delete
             </Button>
