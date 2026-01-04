@@ -72,6 +72,9 @@ export function SuperAdminUsersClient(props: { users: UserRow[] }) {
   const [editSubmitting, setEditSubmitting] = useState(false);
   const [editForm] = Form.useForm();
 
+  // State for controlling expanded rows (accordion behavior)
+  const [expandedRowKeys, setExpandedRowKeys] = useState<React.Key[]>([]);
+
   // Fetch villages for dropdown
   useEffect(() => {
     async function fetchVillages() {
@@ -398,6 +401,16 @@ export function SuperAdminUsersClient(props: { users: UserRow[] }) {
   const expandableConfig: ExpandableConfig<UserRow> = {
     expandedRowRender: (record) => <ExpandedRowComponent record={record} />,
     rowExpandable: (record) => true, // All rows are expandable
+    expandedRowKeys,
+    onExpandedRowsChange: (keys) => {
+      // Accordion behavior: only allow one row to be expanded at a time
+      if (keys.length > 1) {
+        // Keep only the last expanded row
+        setExpandedRowKeys([keys[keys.length - 1]]);
+      } else {
+        setExpandedRowKeys(keys as React.Key[]);
+      }
+    },
     expandIcon: ({ expanded, onExpand, record }) => (
       <div
         style={{
