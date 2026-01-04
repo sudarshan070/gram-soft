@@ -1,10 +1,11 @@
 import { jsonError, jsonOk } from "@/lib/errors";
 import { requireRole } from "@/server/auth/require";
+import { UserRole } from "@/server/models";
 import { getSuperAdminStats } from "@/server/modules/dashboard/statsRepo";
 
 export async function GET() {
   try {
-    await requireRole("SUPER_ADMIN");
+    await requireRole(UserRole.SUPER_ADMIN);
     const stats = await getSuperAdminStats();
     return jsonOk({ stats });
   } catch (err) {
