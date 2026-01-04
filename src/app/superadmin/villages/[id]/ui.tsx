@@ -28,6 +28,12 @@ export function VillageDashboardClient(props: {
     village: VillageRow & { parentId?: string | null };
     subVillages: VillageRow[];
     parentVillage?: VillageRow | null;
+    properties: {
+        _id: string;
+        propertyNo: string;
+        ownerName: string;
+        mobile?: string;
+    }[];
 }) {
     const router = useRouter();
     const { message } = App.useApp();
@@ -128,6 +134,38 @@ export function VillageDashboardClient(props: {
                             </Tag>
                         </Descriptions.Item>
                     </Descriptions>
+                </Card>
+
+                <Card
+                    title="Citizens / Properties (नागरिक / मालमत्ता)"
+                    extra={
+                        <Link href={`/superadmin/villages/${props.village._id}/properties/create`}>
+                            <Button type="primary">Add Property</Button>
+                        </Link>
+                    }
+                >
+                    {props.properties.length > 0 ? (
+                        <Table
+                            rowKey={(r) => r._id}
+                            dataSource={props.properties}
+                            pagination={{ pageSize: 5 }}
+                            columns={[
+                                { title: "Property No", dataIndex: "propertyNo" },
+                                { title: "Owner Name", dataIndex: "ownerName" },
+                                { title: "Mobile", dataIndex: "mobile" },
+                                {
+                                    title: "Actions",
+                                    render: (_, row) => (
+                                        <Button size="small">Edit</Button> // TODO: Add edit link
+                                    )
+                                }
+                            ]}
+                        />
+                    ) : (
+                        <p style={{ color: '#999', textAlign: 'center', padding: 20 }}>
+                            No properties added yet. Click "Add Property" to start.
+                        </p>
+                    )}
                 </Card>
 
                 <Card

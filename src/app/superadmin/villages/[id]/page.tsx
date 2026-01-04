@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { requireRole } from "@/server/auth/require";
 import { UserRole } from "@/server/models/types";
 import { findVillageById, listVillages } from "@/server/modules/villages/villageRepo";
+import { listVillageProperties } from "@/server/modules/villages/villagePropertyRepo";
 import { VillageDashboardClient } from "./ui";
 
 export default async function VillageDashboardPage({ params }: { params: Promise<{ id: string }> }) {
@@ -12,7 +13,11 @@ export default async function VillageDashboardPage({ params }: { params: Promise
     const village = await findVillageById(id);
     if (!village) notFound();
 
-    const subVillages = await listVillages({ parentId: id });
+    const [subVillages, properties] = await Promise.all([
+        listVillages({ parentId: id }),
+        listVillageProperties(id),
+    ]);
+
 
     let parentVillage = null;
     if (village.parentId) {
@@ -45,6 +50,12 @@ export default async function VillageDashboardPage({ params }: { params: Promise
                 taluka: v.taluka,
                 code: v.code,
                 status: v.status,
+            }))}
+            properties={properties.map((p) => ({
+                _id: String(p._id),
+                propertyNo: p.propertyNo,
+                ownerName: p.ownerName,
+                mobile: p.mobile,
             }))}
         />
     );

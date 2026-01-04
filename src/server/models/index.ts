@@ -7,4 +7,6 @@ export * from "./GlobalWaterSupplyTaxRate";
 export * from "./GlobalSlabTaxRate";
 export * from "./GlobalDepreciationRate";
 export * from "./GlobalUsageFactor";
+export * from "./VillageProperty";
+
 
