@@ -168,21 +168,12 @@ export function SuperAdminUsersClient(props: { users: UserRow[] }) {
       ];
 
       return (
-        <div style={{ margin: "0 16px 16px 16px" }}>
-          <Card 
-            title={
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <span style={{ color: "#1890ff" }}>📍</span>
-                Assigned Village Information
-              </div>
-            }
-            size="small"
-            style={{ 
-              background: "linear-gradient(135deg, #f0f9ff 0%, #e6f7ff 100%)",
-              border: "1px solid #91d5ff",
-              borderRadius: "8px"
-            }}
-            extra={
+        <Card 
+          title="Assigned Village"
+          style={{ margin: "16px 0" }}
+          extra={
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <Tag color="success">{record.village?.name}</Tag>
               <Button
                 type="primary"
                 danger
@@ -191,21 +182,22 @@ export function SuperAdminUsersClient(props: { users: UserRow[] }) {
                   setUserToRemoveVillageFrom(record);
                   setRemoveVillageModalOpen(true);
                 }}
-                className="action-button delete-button"
+                className="action-button action-button-scale delete-button"
               >
-                Remove Village
+                Unassign from Village
               </Button>
-            }
-          >
-            <Table
-              columns={villageColumns}
-              dataSource={[record.village]}
-              pagination={false}
-              size="small"
-              rowKey="_id"
-            />
-          </Card>
-        </div>
+            </div>
+          }
+        >
+          <Table
+            columns={villageColumns}
+            dataSource={[record.village]}
+            rowKey={(village) => village._id}
+            pagination={false}
+            size="small"
+            scroll={{ x: 400 }} // Horizontal scroll for village info on mobile
+          />
+        </Card>
       );
     }
 
@@ -214,44 +206,38 @@ export function SuperAdminUsersClient(props: { users: UserRow[] }) {
         <Card 
           title={
             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <span style={{ color: "#faad14" }}>⚠️</span>
+              <span style={{ color: "#1890ff" }}>📍</span>
               No Village Assigned
             </div>
           }
           size="small"
           style={{ 
-            background: "linear-gradient(135deg, #fffbe6 0%, #fff7e6 100%)",
-            border: "1px solid #ffd591",
+            background: "linear-gradient(135deg, #f0f9ff 0%, #e6f7ff 100%)",
+            border: "1px solid #91d5ff",
             borderRadius: "8px"
           }}
         >
-          <div style={{ marginBottom: "16px" }}>
-            <p style={{ margin: 0, color: "#8c8c8c" }}>
-              This user is not currently assigned to any village. Assign a village to grant access.
-            </p>
-          </div>
-          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <Empty 
+            description="This user is not currently assigned to any village"
+            image={Empty.PRESENTED_IMAGE_SIMPLE}
+          />
+          <div style={{ marginTop: "16px" }}>
             <Select
               placeholder="Select a village to assign"
-              style={{ width: 300 }}
+              style={{ width: "100%" }}
+              loading={loadingVillages}
+              disabled={loadingVillages}
               value={selectedVillage}
               onChange={setSelectedVillage}
               options={Array.isArray(villages) ? villages.map((village) => ({
                 label: `${village.name} (${village.district})`,
                 value: village._id,
               })) : []}
-              size="small"
-              loading={loadingVillages}
-              disabled={loadingVillages}
             />
             <Button
               type="primary"
-              size="small"
-              onClick={() => {
-                if (selectedVillage) {
-                  assignVillageToUser(record._id, selectedVillage);
-                }
-              }}
+              style={{ marginTop: "12px", width: "100%" }}
+              onClick={() => assignVillageToUser(record._id, selectedVillage!)}
               disabled={!selectedVillage || assigningVillage}
               loading={assigningVillage}
               className="action-button edit-button"
@@ -501,30 +487,30 @@ export function SuperAdminUsersClient(props: { users: UserRow[] }) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             allowClear
-            style={{ width: 280 }}
+            style={{ width: 200, minWidth: 150 }} // Responsive width
           />
           <Select
+            placeholder="Filter by role"
             value={roleFilter}
-            onChange={(v) => setRoleFilter(v)}
-            style={{ width: 160 }}
-            options={[
-              { value: "ALL", label: "All roles" },
-              { value: UserRole.USER, label: "USER" },
-              { value: UserRole.ADMIN, label: "ADMIN" },
-              { value: UserRole.SUPER_ADMIN, label: "SUPER_ADMIN" },
-            ]}
-          />
+            onChange={setRoleFilter}
+            style={{ width: 120, minWidth: 100 }}
+            allowClear
+          >
+            <Select.Option value="USER">User</Select.Option>
+            <Select.Option value="ADMIN">Admin</Select.Option>
+            <Select.Option value="SUPER_ADMIN">Super Admin</Select.Option>
+          </Select>
           <Select
+            placeholder="Filter by status"
             value={statusFilter}
-            onChange={(v) => setStatusFilter(v)}
-            style={{ width: 160 }}
-            options={[
-              { value: "ALL", label: "All status" },
-              { value: Status.ACTIVE, label: "ACTIVE" },
-              { value: Status.INACTIVE, label: "INACTIVE" },
-            ]}
-          />
-          <Button
+            onChange={setStatusFilter}
+            style={{ width: 120, minWidth: 100 }}
+            allowClear
+          >
+            <Select.Option value="ACTIVE">Active</Select.Option>
+            <Select.Option value="INACTIVE">Inactive</Select.Option>
+          </Select>
+          <Button 
             onClick={() => {
               setQuery("");
               setRoleFilter("ALL");
@@ -538,9 +524,15 @@ export function SuperAdminUsersClient(props: { users: UserRow[] }) {
           rowKey={(r) => r._id}
           columns={columns}
           dataSource={filteredUsers}
-          pagination={{ pageSize: 10 }}
-          scroll={{ x: true }}
+          pagination={{
+            pageSize: 10,
+            showSizeChanger: false,
+            simple: true, // Use simple pagination on mobile
+            responsive: true
+          }}
           expandable={expandableConfig}
+          scroll={{ x: 800 }} // Enable horizontal scrolling on mobile
+          size="small" // Use smaller size on mobile
         />
       </Card>
 
@@ -668,13 +660,13 @@ export function SuperAdminUsersClient(props: { users: UserRow[] }) {
       </Modal>
 
       <Modal
-        title="Remove Village Assignment"
+        title="Unassign User from Village"
         open={removeVillageModalOpen}
         onCancel={() => {
           setRemoveVillageModalOpen(false);
           setUserToRemoveVillageFrom(null);
         }}
-        okText="Remove Village"
+        okText="Unassign from Village"
         okButtonProps={{ danger: true }}
         confirmLoading={removingVillage}
         onOk={() => {
@@ -684,17 +676,28 @@ export function SuperAdminUsersClient(props: { users: UserRow[] }) {
         }}
       >
         <div style={{ marginBottom: 12 }}>
-          Are you sure you want to remove the village assignment from <b>{userToRemoveVillageFrom?.name}</b>?
+          Are you sure you want to unassign <b>{userToRemoveVillageFrom?.name}</b> from village <b>{userToRemoveVillageFrom?.village?.name}</b>?
         </div>
         <div style={{ marginBottom: 12 }}>
           <p style={{ margin: 0, color: "#8c8c8c" }}>
-            This will revoke the user's access to <b>{userToRemoveVillageFrom?.village?.name}</b> village.
+            <strong>User Details:</strong><br/>
+            Name: {userToRemoveVillageFrom?.name}<br/>
+            Email: {userToRemoveVillageFrom?.email}<br/>
+            Role: {userToRemoveVillageFrom?.role}
+          </p>
+        </div>
+        <div style={{ marginBottom: 12 }}>
+          <p style={{ margin: 0, color: "#8c8c8c" }}>
+            <strong>Village Details:</strong><br/>
+            Name: {userToRemoveVillageFrom?.village?.name}<br/>
+            District: {userToRemoveVillageFrom?.village?.district}<br/>
+            Taluka: {userToRemoveVillageFrom?.village?.taluka}
           </p>
         </div>
         <div style={{ padding: "12px", background: "#fff2f0", border: "1px solid #ffccc7", borderRadius: "6px" }}>
           <span style={{ color: "#ff4d4f" }}>⚠️</span>
           <span style={{ marginLeft: "8px", color: "#ff4d4f" }}>
-            The user will lose access to all village-specific features and data.
+            The user will lose access to all village-specific features and data for this village.
           </span>
         </div>
       </Modal>

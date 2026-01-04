@@ -337,6 +337,7 @@ export function SuperAdminVillagesClient(props: { villages: VillageRow[]; users:
           rowKey={(user) => user._id}
           pagination={false}
           size="small"
+          scroll={{ x: 600 }} // Horizontal scroll for user table on mobile
         />
       </Card>
     );
@@ -448,7 +449,7 @@ export function SuperAdminVillagesClient(props: { villages: VillageRow[]; users:
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             allowClear
-            style={{ width: 320 }}
+            style={{ width: 250, minWidth: 150 }} // Responsive width
           />
           <Button onClick={() => setQuery("")}>Clear</Button>
         </Space>
@@ -456,8 +457,15 @@ export function SuperAdminVillagesClient(props: { villages: VillageRow[]; users:
           rowKey={(r) => r._id}
           columns={columns}
           dataSource={filteredVillages}
-          pagination={{ pageSize: 10 }}
+          pagination={{ 
+            pageSize: 10,
+            showSizeChanger: false,
+            simple: true, // Use simple pagination on mobile
+            responsive: true
+          }}
           expandable={expandableConfig}
+          scroll={{ x: 800 }} // Enable horizontal scrolling on mobile
+          size="small" // Use smaller size on mobile
         />
       </Card>
 
