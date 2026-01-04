@@ -5,10 +5,11 @@ import { jsonError, jsonOk, badRequest, notFound } from "@/lib/errors";
 import { updateVillageSchema } from "@/lib/validators/villages";
 import { requireRole } from "@/server/auth/require";
 import { deleteVillage, findVillageById, updateVillage } from "@/server/modules/villages/villageRepo";
+import { UserRole } from "@/server/models";
 
 export async function GET(_: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   try {
-    await requireRole(["SUPER_ADMIN", "ADMIN"]);
+    await requireRole([UserRole.SUPER_ADMIN, UserRole.ADMIN]);
     const { id } = await ctx.params;
     const village = await findVillageById(id);
     if (!village) throw notFound("Village not found");
@@ -20,7 +21,7 @@ export async function GET(_: NextRequest, ctx: { params: Promise<{ id: string }>
 
 export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   try {
-    await requireRole("SUPER_ADMIN");
+    await requireRole(UserRole.SUPER_ADMIN);
     const { id } = await ctx.params;
 
     const body = await req.json();
@@ -38,7 +39,7 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
 
 export async function DELETE(_: Request, ctx: { params: Promise<{ id: string }> }) {
   try {
-    await requireRole("SUPER_ADMIN");
+    await requireRole(UserRole.SUPER_ADMIN);
     const { id } = await ctx.params;
 
     if (!mongoose.isValidObjectId(id)) throw badRequest("Invalid village id");
