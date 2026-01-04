@@ -48,3 +48,37 @@ export type UpdateGlobalWaterSupplyTaxRateInput = z.infer<typeof updateGlobalWat
 export type CreateGlobalSlabTaxRateInput = z.infer<typeof createGlobalSlabTaxRateSchema>;
 export type UpdateGlobalSlabTaxRateInput = z.infer<typeof updateGlobalSlabTaxRateSchema>;
 
+export const createGlobalDepreciationRateSchema = z
+  .object({
+    ageFromYear: z.coerce.number().nonnegative(),
+    ageToYear: z.coerce.number().nonnegative().nullable().optional(),
+    depreciationRate: z.coerce.number().nonnegative(),
+    effectiveFrom: z.coerce.date(),
+  })
+  .superRefine((val, ctx) => {
+    if (val.ageToYear != null && val.ageToYear < val.ageFromYear) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "ageToYear must be >= ageFromYear",
+        path: ["ageToYear"],
+      });
+    }
+  });
+
+export const updateGlobalDepreciationRateSchema = createGlobalDepreciationRateSchema.partial();
+
+export type CreateGlobalDepreciationRateInput = z.infer<typeof createGlobalDepreciationRateSchema>;
+export type UpdateGlobalDepreciationRateInput = z.infer<typeof updateGlobalDepreciationRateSchema>;
+
+export const createGlobalUsageFactorSchema = z.object({
+  usageTypeMr: z.string().trim().min(1),
+  weightage: z.coerce.number().nonnegative(),
+  effectiveFrom: z.coerce.date(),
+});
+
+export const updateGlobalUsageFactorSchema = createGlobalUsageFactorSchema.partial();
+
+export type CreateGlobalUsageFactorInput = z.infer<typeof createGlobalUsageFactorSchema>;
+export type UpdateGlobalUsageFactorInput = z.infer<typeof updateGlobalUsageFactorSchema>;
+
+

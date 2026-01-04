@@ -5,3 +5,6 @@ export * from "./UserVillageAccess";
 export * from "./GlobalConstructionLandRate";
 export * from "./GlobalWaterSupplyTaxRate";
 export * from "./GlobalSlabTaxRate";
+export * from "./GlobalDepreciationRate";
+export * from "./GlobalUsageFactor";
+
