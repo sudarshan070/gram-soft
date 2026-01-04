@@ -11,7 +11,9 @@ function generateVillageCode() {
 export async function GET() {
   try {
     await requireRole([UserRole.SUPER_ADMIN, UserRole.ADMIN]);
-    const villages = await listVillages();
+    // By default, only list root villages (not sub-villages)
+    // If we want to support filtering via query params, we can add that logic here
+    const villages = await listVillages({ parentId: null });
     return jsonOk({ villages });
   } catch (err) {
     return jsonError(err);
@@ -31,6 +33,7 @@ export async function POST(req: Request) {
       district: parsed.data.district,
       taluka: parsed.data.taluka,
       code: parsed.data.code ?? generateVillageCode(),
+      parentId: parsed.data.parentId ?? null,
       status: parsed.data.status ?? "ACTIVE",
     });
 

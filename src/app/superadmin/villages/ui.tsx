@@ -74,7 +74,7 @@ export function SuperAdminVillagesClient(props: { villages: VillageRow[]; users:
   const filteredVillages = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return villages;
-    return villages.filter((v) => 
+    return villages.filter((v) =>
       v.name.toLowerCase().includes(q) ||
       v.taluka.toLowerCase().includes(q) ||
       v.district.toLowerCase().includes(q)
@@ -245,7 +245,7 @@ export function SuperAdminVillagesClient(props: { villages: VillageRow[]; users:
   const ExpandedRowComponent = ({ record }: { record: VillageRow }) => {
     const villageUsers = record.users || [];
     const paginationState = expandedRowPagination[record._id] || { current: 1, pageSize: 5 };
-    
+
     const startIndex = (paginationState.current - 1) * paginationState.pageSize;
     const endIndex = startIndex + paginationState.pageSize;
     const paginatedUsers = villageUsers.slice(startIndex, endIndex);
@@ -253,9 +253,9 @@ export function SuperAdminVillagesClient(props: { villages: VillageRow[]; users:
     const userColumns: ColumnsType<UserRow> = [
       { title: "Name", dataIndex: "name", key: "name" },
       { title: "Email", dataIndex: "email", key: "email" },
-      { 
-        title: "Role", 
-        dataIndex: "role", 
+      {
+        title: "Role",
+        dataIndex: "role",
         key: "role",
         render: (role: string) => (
           <Tag color={role === "SUPER_ADMIN" ? "red" : role === "ADMIN" ? "blue" : "green"}>
@@ -263,9 +263,9 @@ export function SuperAdminVillagesClient(props: { villages: VillageRow[]; users:
           </Tag>
         )
       },
-      { 
-        title: "Status", 
-        dataIndex: "status", 
+      {
+        title: "Status",
+        dataIndex: "status",
         key: "status",
         render: (status: string) => (
           <Tag color={status === "ACTIVE" ? "green" : "red"}>
@@ -296,12 +296,12 @@ export function SuperAdminVillagesClient(props: { villages: VillageRow[]; users:
 
     if (villageUsers.length === 0) {
       return (
-        <Card 
-          title="Assigned Users" 
+        <Card
+          title="Assigned Users"
           style={{ margin: "16px 0" }}
           extra={<Tag color="default">No users assigned</Tag>}
         >
-          <Empty 
+          <Empty
             description="No users are currently assigned to this village"
             image={Empty.PRESENTED_IMAGE_SIMPLE}
           />
@@ -310,7 +310,7 @@ export function SuperAdminVillagesClient(props: { villages: VillageRow[]; users:
     }
 
     return (
-      <Card 
+      <Card
         title={`Assigned Users (${villageUsers.length})`}
         style={{ margin: "16px 0" }}
         extra={
@@ -407,9 +407,18 @@ export function SuperAdminVillagesClient(props: { villages: VillageRow[]; users:
       title: "Actions",
       render: (_, row) => (
         <Space>
+          <Tooltip title="View Village Dashboard">
+            <Button
+              type="primary"
+              size="small"
+              onClick={() => router.push(`/superadmin/villages/${row._id}`)}
+            >
+              View
+            </Button>
+          </Tooltip>
           <Tooltip title="Manage users assigned to this village">
-            <Button 
-              type="default" 
+            <Button
+              type="default"
               size="small"
               onClick={() => openManageUsers(row._id)}
               className="action-button action-button-scale attach-users-button"
@@ -418,9 +427,9 @@ export function SuperAdminVillagesClient(props: { villages: VillageRow[]; users:
             </Button>
           </Tooltip>
           <Tooltip title="Permanently delete this village and all associated data">
-            <Button 
-              type="default" 
-              danger 
+            <Button
+              type="default"
+              danger
               size="small"
               onClick={() => openDeleteVillage(row._id)}
               className="action-button action-button-scale delete-button"
@@ -457,7 +466,7 @@ export function SuperAdminVillagesClient(props: { villages: VillageRow[]; users:
           rowKey={(r) => r._id}
           columns={columns}
           dataSource={filteredVillages}
-          pagination={{ 
+          pagination={{
             pageSize: 10,
             showSizeChanger: false,
             simple: true, // Use simple pagination on mobile
@@ -552,10 +561,10 @@ export function SuperAdminVillagesClient(props: { villages: VillageRow[]; users:
         okButtonProps={{ danger: true, disabled: deleteConfirmText !== "delete" }}
         confirmLoading={deletingVillage}
         onOk={() => {
-    if (deleteVillageId) {
-      confirmDeleteVillage(deleteVillageId);
-    }
-  }}
+          if (deleteVillageId) {
+            confirmDeleteVillage(deleteVillageId);
+          }
+        }}
       >
         <div style={{ marginBottom: 12 }}>
           Are you sure you want to delete this village? Confirm by typing <b>delete</b> below.
