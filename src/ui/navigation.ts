@@ -38,6 +38,16 @@ export function getNavItems(input: { role: UserRole; villageId?: string }): NavI
       label: "दिवाबत्ती कर (Slab)",
       href: "/superadmin/rates/divabatti-tax",
     });
+    items.push({
+      key: "sa-depreciation-rates",
+      label: "इमारतीचे आयुष्य (वय) नुसार घसारी दर",
+      href: "/superadmin/rates/depreciation",
+    });
+    items.push({
+      key: "sa-usage-factor-rates",
+      label: "इमारतीचा वापर आणि भारांक",
+      href: "/superadmin/rates/usage-factor",
+    });
 
     return items;
   }
