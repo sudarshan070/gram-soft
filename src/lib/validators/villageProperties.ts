@@ -16,6 +16,7 @@ export const createVillagePropertySchema = z.object({
     propertyNo: z.string().min(1),
     wardNo: z.string().min(1),
     ownerName: z.string().min(1),
+    aadharNumber: z.string().length(12).regex(/^\d+$/, "Must be numeric").optional().or(z.literal("")),
     spouseName: z.string().optional(),
     occupierName: z.string().optional(),
     address: z.string().optional(),

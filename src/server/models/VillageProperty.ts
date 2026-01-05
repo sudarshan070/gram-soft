@@ -18,6 +18,7 @@ export type VillagePropertyDocument = {
     propertyNo: string;
     wardNo: string;
     ownerName: string;
+    aadharNumber?: string;
     spouseName?: string;
     occupierName?: string;
     address?: string;
@@ -53,6 +54,7 @@ const villagePropertySchema = new Schema<VillagePropertyDocument>(
         propertyNo: { type: String, required: true, trim: true },
         wardNo: { type: String, required: true, trim: true },
         ownerName: { type: String, required: true, trim: true },
+        aadharNumber: { type: String, trim: true, minlength: 12, maxlength: 12 },
         spouseName: { type: String, trim: true },
         occupierName: { type: String, trim: true },
         address: { type: String, trim: true },

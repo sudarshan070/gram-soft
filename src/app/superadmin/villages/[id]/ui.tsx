@@ -151,11 +151,19 @@ export function VillageDashboardClient(props: {
                             pagination={{ pageSize: 5 }}
                             columns={[
                                 { title: "Property No", dataIndex: "propertyNo" },
-                                { title: "Owner Name", dataIndex: "ownerName" },
+                                {
+                                    title: "Owner Name",
+                                    dataIndex: "ownerName",
+                                    render: (name, row) => (
+                                        <Link href={`/superadmin/villages/${props.village._id}/properties/${row._id}`} style={{ fontWeight: 500 }}>
+                                            {name}
+                                        </Link>
+                                    )
+                                },
                                 { title: "Mobile", dataIndex: "mobile" },
                                 {
                                     title: "Actions",
-                                    render: (_, row) => (
+                                    render: () => (
                                         <Button size="small">Edit</Button> // TODO: Add edit link
                                     )
                                 }
@@ -163,7 +171,7 @@ export function VillageDashboardClient(props: {
                         />
                     ) : (
                         <p style={{ color: '#999', textAlign: 'center', padding: 20 }}>
-                            No properties added yet. Click "Add Property" to start.
+                            No properties added yet. Click &quot;Add Property&quot; to start.
                         </p>
                     )}
                 </Card>

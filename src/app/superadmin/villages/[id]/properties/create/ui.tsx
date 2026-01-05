@@ -1,7 +1,7 @@
 
 "use client";
 
-import { App, Button, Card, Checkbox, Col, Form, Input, Row, Select, Space, Table, Typography, InputNumber } from "antd";
+import { App, Button, Card, Checkbox, Col, Form, Input, Row, Select, Typography, InputNumber } from "antd";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
@@ -10,7 +10,7 @@ import { AppShell } from "@/ui/layouts/AppShell";
 import { MarathiTransliterateInput } from "@/ui/components/MarathiTransliterateInput";
 import { UserRole } from "@/server/models/types";
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 const { Option } = Select;
 
 // Props types
@@ -49,11 +49,11 @@ export function CreatePropertyClient({ village, constructionRates, usageFactors,
     // Custom component for Construction List to handle dynamic rows nicely
     // Moving inline for simplicity to match image layout
 
-    async function onFinish(values: any) {
+    async function onFinish(values: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
         setSubmitting(true);
         try {
             // Calculate areas if not present (though UI should show them)
-            const formattedConstructions = values.constructions?.map((c: any) => ({
+            const formattedConstructions = values.constructions?.map((c: any) => ({ // eslint-disable-line @typescript-eslint/no-explicit-any
                 ...c,
                 areaSqFt: Number(c.length) * Number(c.width),
             })) || [];
@@ -78,7 +78,7 @@ export function CreatePropertyClient({ village, constructionRates, usageFactors,
             message.success("Property added successfully!");
             router.push(`/superadmin/villages/${village._id}`);
             router.refresh();
-        } catch (err: any) {
+        } catch (err: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
             message.error(err.message);
         } finally {
             setSubmitting(false);
@@ -131,7 +131,18 @@ export function CreatePropertyClient({ village, constructionRates, usageFactors,
                                 <MarathiTransliterateInput placeholder="Full Name" />
                             </Form.Item>
                         </Col>
-                        <Col xs={24} md={12}>
+                        <Col xs={24} md={6}>
+                            <Form.Item
+                                name="aadharNumber"
+                                label="Aadhar Number (आधार क्र.)"
+                                rules={[
+                                    { pattern: /^\d{12}$/, message: "Must be 12 digits" }
+                                ]}
+                            >
+                                <Input placeholder="12 digit number" maxLength={12} />
+                            </Form.Item>
+                        </Col>
+                        <Col xs={24} md={6}>
                             <Form.Item name="occupierName" label="Occupier Name (भोगवटादाराचे नाव)">
                                 <MarathiTransliterateInput placeholder="Occupier Name (or 'Self')" />
                             </Form.Item>
