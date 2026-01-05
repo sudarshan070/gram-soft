@@ -343,7 +343,7 @@ export function SuperAdminVillagesClient(props: { villages: VillageRow[]; users:
     );
   };
 
-  // Expandable configuration for the table
+  // Expandable configuration for table
   const expandableConfig: ExpandableConfig<VillageRow> = {
     expandedRowRender: (record) => <ExpandedRowComponent record={record} />,
     rowExpandable: (record) => true, // All rows are expandable
@@ -394,7 +394,7 @@ export function SuperAdminVillagesClient(props: { villages: VillageRow[]; users:
         </span>
       </div>
     ),
-    expandRowByClick: true, // Enable row click to expand
+    expandRowByClick: false, // Disable row click expansion - only chevron clickable
   };
 
   const columns: ColumnsType<VillageRow> = [

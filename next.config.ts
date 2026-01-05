@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   /* config options here */
   reactStrictMode: true,
   experimental: {
-    serverComponentsExternalPackages: [],
+    // Add valid experimental options here
   },
   // Configure for Turbopack
   turbopack: {

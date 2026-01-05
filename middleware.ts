@@ -3,7 +3,7 @@ import { jwtVerify } from "jose";
 
 import { AUTH_COOKIE_NAME } from "@/server/auth/constants";
 
-const protectedMatchers = ["/superadmin", "/village"]; // prefix match
+const protectedMatchers = ["/superadmin", "/village", "/user"]; // prefix match
 
 async function verifyToken(token: string) {
   const secret = new TextEncoder().encode(process.env.JWT_SECRET ?? "");
@@ -58,5 +58,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/superadmin/:path*", "/village/:path*"],
+  matcher: ["/superadmin/:path*", "/village/:path*", "/user/:path*"],
 };
