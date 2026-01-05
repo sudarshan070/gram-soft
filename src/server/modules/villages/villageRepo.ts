@@ -3,9 +3,15 @@ import mongoose from "mongoose";
 import { connectDb } from "@/server/db/mongoose";
 import { UserModel, UserVillageAccessModel, VillageModel } from "@/server/models";
 
-export async function listVillages() {
+export async function listVillages(filters: { parentId?: string | null } = {}) {
   await connectDb();
-  return VillageModel.find({}).sort({ createdAt: -1 }).lean();
+  const query: Record<string, unknown> = {};
+
+  if (filters.parentId !== undefined) {
+    query.parentId = filters.parentId;
+  }
+
+  return VillageModel.find(query).sort({ createdAt: -1 }).lean();
 }
 
 export async function findVillageById(id: string) {
@@ -18,6 +24,7 @@ export async function createVillage(params: {
   district: string;
   taluka: string;
   code: string;
+  parentId?: string | null;
   status: "ACTIVE" | "INACTIVE";
 }) {
   await connectDb();

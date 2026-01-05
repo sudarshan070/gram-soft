@@ -9,6 +9,7 @@ export type VillageDocument = {
   taluka: string;
   code: string;
   userIds: mongoose.Types.ObjectId[];
+  parentId: mongoose.Types.ObjectId | null;
   status: Status;
   createdAt: Date;
 };
@@ -20,6 +21,7 @@ const villageSchema = new Schema<VillageDocument>(
     taluka: { type: String, required: true, trim: true },
     code: { type: String, required: true, trim: true },
     userIds: [{ type: Schema.Types.ObjectId, ref: "User" }],
+    parentId: { type: Schema.Types.ObjectId, ref: "Village", default: null }, // Parent village for sub-villages
     status: { type: String, required: true, enum: Object.values(Status), default: Status.ACTIVE },
     createdAt: { type: Date, required: true, default: () => new Date() },
   },
@@ -27,6 +29,12 @@ const villageSchema = new Schema<VillageDocument>(
 );
 
 villageSchema.index({ code: 1 }, { unique: true });
+
+// Prevent Mongoose OverwriteModelError by checking if model exists
+// In development, force delete to ensure schema changes (like parentId) are applied
+if (process.env.NODE_ENV === "development" && mongoose.models.Village) {
+  delete mongoose.models.Village;
+}
 
 export const VillageModel =
   (mongoose.models.Village as mongoose.Model<VillageDocument>) ||

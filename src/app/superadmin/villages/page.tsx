@@ -11,19 +11,19 @@ import { SuperAdminVillagesClient } from "./ui";
 export default async function SuperAdminVillagesPage() {
   await requireRole(UserRole.SUPER_ADMIN);
 
-  const [villages, users] = await Promise.all([listVillages(), listUsers()]);
-  
+  const [villages, users] = await Promise.all([listVillages({ parentId: null }), listUsers()]);
+
   // Fetch user details for each village
   const villagesWithUsers = await Promise.all(
     villages.map(async (village) => {
       if (mongoose.connection.readyState !== 1) {
         await mongoose.connect(process.env.MONGODB_URI!);
       }
-      
+
       // Populate user details for this village
       const villageWithUsers = await VillageModel.findById(village._id).populate('userIds');
       const userDocs = (villageWithUsers?.userIds as any[]) || [];
-      
+
       return {
         _id: String(village._id),
         name: village.name,
