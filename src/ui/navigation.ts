@@ -55,12 +55,14 @@ export function getNavItems(input: { role: UserRole; villageId?: string }): NavI
   // Regular users (ADMIN/USER) without village access
   if (!input.villageId && (input.role === UserRole.ADMIN || input.role === UserRole.USER)) {
     items.push({ key: "u-dash", label: "Dashboard", href: "/user/dashboard" });
+    items.push({ key: "u-village", label: "My Village", href: "/user/village" });
     return items;
   }
 
   // Users with village access
   if (input.villageId) {
     items.push({ key: "v-dash", label: "Dashboard", href: `/village/${input.villageId}/dashboard` });
+    items.push({ key: "v-village", label: "My Village", href: `/village/${input.villageId}` });
   }
 
   return items;

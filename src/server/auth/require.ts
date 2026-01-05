@@ -17,11 +17,15 @@ export type AuthContext = {
 export async function requireAuth(): Promise<AuthContext> {
   const cookieStore = await cookies();
   const token = cookieStore.get(AUTH_COOKIE_NAME)?.value;
-  if (!token) throw unauthorized();
+  if (!token) {
+    console.error("Auth failed: No token found in cookies");
+    throw unauthorized();
+  }
 
   try {
     return await verifyAuthToken(token);
-  } catch {
+  } catch (err) {
+    console.error("Auth verification failed:", err);
     throw unauthorized();
   }
 }

@@ -5,7 +5,7 @@ import { loginRequestSchema } from "@/lib/validators/auth";
 import { AUTH_COOKIE_MAX_AGE_SECONDS, AUTH_COOKIE_NAME } from "@/server/auth/constants";
 import { signAuthToken } from "@/server/auth/jwt";
 import { verifyPassword } from "@/server/auth/password";
-import { findUserByEmail } from "@/server/modules/users/userRepo";
+import { findUserByEmail, getVillageIdsForUser } from "@/server/modules/users/userRepo";
 import { Status, UserRole } from "@/server/models/types";
 
 export async function POST(req: Request) {
@@ -22,8 +22,18 @@ export async function POST(req: Request) {
     const ok = await verifyPassword(parsed.data.password, user.passwordHash);
     if (!ok) throw unauthorized("Invalid credentials");
 
-    // For SUPER_ADMIN, no villageIds. For others, use villageId if assigned
-    const villageIds = user.role === UserRole.SUPER_ADMIN ? [] : (user.villageId ? [String(user.villageId)] : []);
+    // For SUPER_ADMIN, no villageIds. For others, fetch all assigned villages
+    let villageIds: string[] = [];
+    if (user.role !== UserRole.SUPER_ADMIN) {
+      const accessIds = await getVillageIdsForUser(String(user._id));
+      const directId = user.villageId ? String(user.villageId) : null;
+      
+      // Combine and dedup
+      const allIds = new Set(accessIds);
+      if (directId) allIds.add(directId);
+      
+      villageIds = Array.from(allIds);
+    }
 
     const token = await signAuthToken(
       {

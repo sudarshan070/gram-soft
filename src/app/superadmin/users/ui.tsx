@@ -434,7 +434,7 @@ export function SuperAdminUsersClient(props: { users: UserRow[] }) {
         </span>
       </div>
     ),
-    expandRowByClick: true, // Enable row click to expand
+    expandRowByClick: false, // content request: only chevron clickable
   };
 
   async function onCreate(values: {

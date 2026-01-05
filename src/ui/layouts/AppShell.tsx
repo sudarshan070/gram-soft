@@ -40,7 +40,15 @@ export function AppShell(props: {
         onCollapse={setCollapsed}
         breakpoint="lg"
         collapsedWidth={0}
-        style={{ position: "relative" }}
+        width={240}
+        style={{ 
+          position: "fixed",
+          left: 0,
+          top: 0,
+          bottom: 0,
+          zIndex: 1000,
+          overflow: "hidden"
+        }}
       >
         <div style={{
           height: 48,
@@ -77,11 +85,14 @@ export function AppShell(props: {
           </Button>
         </div>
       </Sider>
-      <Layout>
+      <Layout style={{ minHeight: "100vh", marginLeft: collapsed ? 0 : 240 }}>
         <Header style={{ background: "white", display: "flex", alignItems: "center" }}>
           <div style={{ fontWeight: 600 }}>{props.title}</div>
         </Header>
-        <Content style={{ padding: "clamp(12px, 2.5vw, 24px)" }}>{props.children}</Content>
+        <Content style={{ 
+          padding: "clamp(12px, 2.5vw, 24px)",
+          marginLeft: collapsed ? 0 : 240
+        }}>{props.children}</Content>
       </Layout>
     </Layout>
   );
